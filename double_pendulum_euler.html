@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+.center {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+
+.button {
+  background-color:#96D4D4;
+  color: black;
+  padding: 15px 32px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  cursor: pointer;
+}
+table, th, td {
+  border: 1px solid black;
+ 
+}
+th{
+  background-color:cyan;
+}
+
+th, td {
+  text-align: left;
+  padding: 8px;
+}
+tr:nth-child(even) {
+  background-color: #96D4D4;
+}
+
+ .tab {
+  width:100%;
+}
+
+body{
+background-color:lightgray;
+}
+
+</style>
+</head>
+<body>
+<h2 style="text-align:center;">DVOSTRUKO NJIHALO</h2>
+<p style="text-align:center;">Unesi vrijednosti</p>
+<table class="center">
+<tr>
+<td>unesi l1=</td>
+<td><input type="text" id="l1" value="1" >
+</td>
+</tr>
+<tr>
+<td>unesi l2=</td>
+<td><input type="text" id="l2" value="1" >
+</td>
+</tr>
+<tr>
+<td>unesi kut a1</td>
+<td><input type="text" id="a1" value="45" >
+</td>
+</tr>
+<tr>
+<td>unesi kut a2</td>
+<td><input type="text" id="a2" value="45" >
+</td>
+</tr>
+<tr>
+<td>unesi masu m1</td>
+<td><input type="text" id="m1" value="1" >
+</td>
+</tr>
+<tr>
+<td>unesi masu m2</td>
+<td><input type="text" id="m2" value="1" >
+</td>
+</tr>
+<tr>
+<td>unesi gravitaciju g</td>
+<td><input type="text" id="g" value="10" >
+</td>
+</tr>
+<tr>
+<td>
+korak e=</td>
+<td><input type="text" id="e" value=".01" >
+</td>
+</tr>
+</table>
+
+<hr>
+<p style="text-align:center;">Stisni tipku</p>
+<div style="text-align:center">
+<button class="button" onclick="myFunction()" >Racun</button>
+</div>
+<hr>
+<p style="text-align:center;">Stisni tipku</p>
+<p style="text-align:center;">1234</p>
+<table class="center">
+<tr>
+<td>unesi broj=</td>
+<td><input type="text" id="broj" value="1234" >
+</td>
+</table>
+<br>
+<div style="text-align:center">
+<button class="button" onclick="myFunction1()" >Trazi</button>
+</div>
+<br>
+<hr>
+<center>
+<canvas id="myCanvas" width="800" height="450" style="border:1px solid #d3d3d3;background-color:white;">
+Your browser does not support the HTML canvas tag.</canvas>
+</center>
+<div style="text-align:center">
+<button class="button" onclick="init()" >Stisni</button>
+</div>
+<hr>
+<div id="polje">polje</div>
+<p id="demo"></p>
+<script>
+var str="",strx="";
+var per="";
+var i=0;
+var t=0;
+var dt=0;
+var ctx; 
+var c;
+var l0,l0x,a0,a0x,e0,e0x;
+var xx,yy,da0x;
+var l01,l0x1,l02,l0x2,a01,a0x1,a02,a0x2;
+var m01,m0x1,m02,m0x2,gx,gx0,e0,e0x;
+var da0x1,da0x2;
+
+function myFunction() {
+c= document.getElementById("myCanvas");
+ctx = c.getContext("2d");
+str="";
+i=0;
+l01=document.getElementById("l1").value;
+l0x1=parseFloat(l01);
+l02=document.getElementById("l2").value;
+l0x2=parseFloat(l02);
+
+a01=document.getElementById("a1").value;
+a0x1=parseFloat(a01);
+a02=document.getElementById("a2").value;
+a0x2=parseFloat(a02);
+
+m01=document.getElementById("m1").value;
+m0x1=parseFloat(m01);
+m02=document.getElementById("m2").value;
+m0x2=parseFloat(m02);
+
+gx=document.getElementById("g").value;
+gx0=parseFloat(gx);
+
+e0=document.getElementById("e").value;
+e0x=parseFloat(e0);
+
+
+str+="<hr>";
+str+=l01+"<br>";
+str+=l02+"<br>";
+str+=a01+"<br>";
+str+=a02+"<br>";
+str+=m01+"<br>";
+str+=m02+"<br>";
+str+=gx+"<br>";
+str+=e0+"<br>";
+
+da0x1=dtor(a0x1);
+da0x2=dtor(a0x2);
+
+str+=da0x1+"<br>";
+str+=da0x2+"<br>";
+str+="<hr>";
+
+if(a0x1<=0 || a0x1>90) {
+  alert("kut manji od nule ili veci od 90");
+  document.getElementById("a").value="";
+  da0x1=0.01;
+}
+
+
+str+="<table class='tab'>";
+str+="<tr>";
+str+="<th>RB.</th><th>yp1</th>";
+str+="<th>yp2</th><th>dx1</th>";
+str+="<tr>";
+str+="<th>RB.</th><th>dx2</th>";
+str+="<th>dxx1</th><th>dyy1</th>";
+str+="</tr>";
+str+="<tr>";
+str+="<th>RB.</th><th></th>";
+str+="<th>dxx2</th><th>dyy2</th>";
+str+="</tr>";
+str+="<tr>";
+str+="<th>RB.</th>";
+str+="<th>(dx1)&#176;</th><th>(dx2)&#176;</th><th>(dx1-dx2)&#176;</th>";
+str+="</tr>";
+str+="<tr>";
+str+="<th>RB.</th><th>te1cc</th>";
+str+="<th>te2cc</th><th></th>";
+str+="</tr>";
+
+str+="</tr>";
+str+="<tr>";
+str+="<th>RB.</th><th>x1c</th>";
+str+="<th>y1c</th><th>x2c</th>";
+str+="</tr>";
+
+str+="</tr>";
+str+="<tr>";
+str+="<th>RB.</th><th>y2c</th>";
+str+="<th>x1cc</th><th>y1cc</th>";
+str+="</tr>";
+
+str+="</tr>";
+str+="<tr>";
+str+="<th>RB.</th>";
+str+="<th>x2cc</th><th>y2cc</th><th></th>";
+str+="</tr>";
+
+str+="<tr>";
+str+="<th>RB.</th>";
+str+="<th>T1</th><th>T2</th><th></th>";
+str+="</tr>";
+
+str+="<tr>";
+str+="<th>RB.</th>";
+str+="<th>T1x</th><th>T2x</th><th>Tx</th>";
+str+="</tr>";
+
+str+="<tr>";
+str+="<th>RB.</th>";
+str+="<th>T1y</th><th>T2y</th><th>Ty</th>";
+str+="</tr>";
+
+
+dx1=da0x1;
+yp1=0;
+dx2=da0x2;
+yp2=0;
+i=0;
+
+
+
+
+while(yp1<=0)
+{
+te1cc=te1ccx(dx1,dx2,yp1,yp2);
+te2cc=te2ccx(dx1,dx2,yp1,yp2);
+
+yp1+=te1cc*e0x;
+yp2+=te2cc*e0x;
+
+dx2+=yp2*e0x;
+dx1+=yp1*e0x;
+
+str+="<tr>";
+str+="<td>"+i+"</td>";
+str+="<td>"+yp1+"</td>";
+str+="<td>"+yp2+"</td>";
+str+="<td>"+dx1+"</td>";
+str+="</tr>";
+str+="<tr>";
+str+="<td>"+i+"</td>";
+str+="<td>"+dx2+"</td>";
+dyy1=l0x1*Math.cos(dx1);
+dxx1=l0x1*Math.sin(dx1);
+str+="<td>"+dxx1+"</td>";
+str+="<td>"+dyy1+"</td>";
+str+="</tr>";
+str+="<tr>";
+str+="<td>"+i+"</td>";
+dyy2=dyy1+l0x2*Math.cos(dx2);
+dxx2=dxx1+l0x2*Math.sin(dx2);
+str+="<td></td>";
+str+="<td>"+dxx2+"</td>";
+str+="<td>"+dyy2+"</td>";
+str+="</tr>";
+str+="<tr>";
+str+="<td>"+i+"</td>";
+str+="<td>"+rtod(dx1)+"</td>";
+str+="<td>"+rtod(dx2)+"</td>";
+str+="<td>"+rtod(dx1-dx2)+"</td>";
+str+="</tr>";
+str+="</tr>";
+str+="<tr>";
+str+="<td>"+i+"</td>";
+str+="<td>"+te1cc+"</td>";
+str+="<td>"+te2cc+"</td>";
+str+="<td></td>";
+str+="</tr>";
+
+x1c=yp1*l0x1*Math.cos(dx1);
+y1c=yp1*l0x1*Math.sin(dx1);
+x2c=x1c+yp2*l0x2*Math.cos(dx2);
+y2c=y1c+yp2*l0x2*Math.sin(dx2);
+
+
+str+="<tr>";
+str+="<td>"+i+"</td>";
+str+="<td>"+x1c+"</td>";
+str+="<td>"+y1c+"</td>";
+str+="<td>"+x2c+"</td>";
+str+="</tr>";
+
+x1cc=-yp1*yp1*l0x1*Math.sin(dx1)+te1cc*l0x1*Math.cos(dx1);
+y1cc=yp1*yp1*l0x1*Math.cos(dx1)+te1cc*l0x1*Math.sin(dx1);
+x2cc=x1cc-yp2*yp2*l0x2*Math.sin(dx2)+te2cc*l0x2*Math.cos(dx2);
+y2cc=y1cc+yp2*yp2*l0x2*Math.cos(dx2)+te2cc*l0x2*Math.sin(dx2);
+
+str+="<tr>";
+str+="<td>"+i+"</td>";
+str+="<td>"+y2c+"</td>";
+str+="<td>"+x1cc+"</td>";
+str+="<td>"+y1cc+"</td>";
+str+="</tr>";
+
+str+="<tr>";
+str+="<td>"+i+"</td>";
+str+="<td>"+x2cc+"</td>";
+str+="<td>"+y2cc+"</td>";
+str+="<td></td>";
+str+="</tr>";
+
+T2=-m0x2*x2cc/Math.sin(dx2);
+T1=-(m0x1*x1cc+m0x2*x2cc)/Math.sin(dx1);
+
+str+="<tr>";
+str+="<td>"+i+"</td>";
+str+="<td>"+T1+"</td>";
+str+="<td>"+T2+"</td>";
+str+="<td></td>";
+str+="</tr>";
+
+T1y=T1*Math.cos(dx1);
+T2y=T2*Math.cos(dx2);
+Ty=T1y+T2y;
+
+T1x=T1*Math.sin(dx1);
+T2x=T2*Math.sin(dx2);
+Tx=T1x+T2x;
+
+
+
+
+str+="<tr>";
+str+="<td>"+i+"</td>";
+str+="<td>"+T1x+"</td>";
+str+="<td>"+T2x+"</td>";
+str+="<td>"+Tx+"</td>";
+str+="</tr>";
+
+str+="<tr>";
+str+="<td>"+i+"</td>";
+str+="<td>"+T1y+"</td>";
+str+="<td>"+T2y+"</td>";
+str+="<td>"+Ty+"</td>";
+str+="</tr>";
+
+dt+=e0x;
+i++;
+
+//dyy=Math.cos(dx);
+//dxx=Math.sin(dx);
+
+
+
+}
+
+
+str+="</table>";
+
+str+="</br></br>";
+
+document.getElementById("polje").innerHTML=str;
+
+
+
+}
+
+
+
+
+
+
+function init()
+{
+
+
+l01=document.getElementById("l1").value;
+l0x1=parseFloat(l01);
+l02=document.getElementById("l2").value;
+l0x2=parseFloat(l02);
+
+a01=document.getElementById("a1").value;
+a0x1=parseFloat(a01);
+a02=document.getElementById("a2").value;
+a0x2=parseFloat(a02);
+
+m01=document.getElementById("m1").value;
+m0x1=parseFloat(m01);
+m02=document.getElementById("m2").value;
+m0x2=parseFloat(m02);
+
+gx=document.getElementById("g").value;
+gx0=parseFloat(gx);
+
+da0x1=dtor(a0x1);
+da0x2=dtor(a0x2);
+
+dx1=da0x1;
+yp1=0;
+dx2=da0x2;
+yp2=0;
+e0x=0.01;
+setInterval(draw,10);
+
+}
+
+
+
+function draw()
+{
+
+te1cc=te1ccx(dx1,dx2,yp1,yp2);
+te2cc=te2ccx(dx1,dx2,yp1,yp2);
+
+yp1+=te1cc*e0x;
+yp2+=te2cc*e0x;
+dx2+=yp2*e0x;
+
+
+
+dx1+=yp1*e0x;
+
+
+
+dyyy1=400*l0x1/(l0x1+l0x2)*Math.cos(dx1);
+dxxx1=400*l0x1/(l0x1+l0x2)*Math.sin(dx1);
+dyyy2=400*l0x2/(l0x1+l0x2)*Math.cos(dx2);
+dxxx2=400*l0x2/(l0x1+l0x2)*Math.sin(dx2);
+
+ctx.clearRect(0,0,800,450);
+ctx.fillStyle ='white';
+//ctx.fillRect(0,0,600,450);
+
+ctx.beginPath();
+ctx.moveTo(400,0);
+ctx.lineTo(400,450);
+ctx.strokeStyle = "black";
+ctx.stroke()
+ctx.closePath();
+
+
+ctx.beginPath();
+ctx.moveTo(0,0);
+ctx.lineTo(600,0);
+ctx.strokeStyle = "black";
+ctx.stroke()
+ctx.closePath();
+
+
+ctx.beginPath();
+//ctx.moveTo(300+x0x,225-y0x);
+ctx.moveTo(400,0);
+ctx.lineTo(400+dxxx1,dyyy1);
+ctx.lineTo(400+dxxx1+dxxx2,dyyy1+dyyy2);
+ctx.strokeStyle = "black";
+ctx.stroke();
+ctx.closePath();
+ctx.beginPath();
+ctx.arc(400+dxxx1,dyyy1, 5, 0, 2 * Math.PI);
+ctx.stroke();
+ctx.beginPath();
+ctx.arc(400+dxxx1+dxxx2,dyyy1+dyyy2, 5, 0, 2 * Math.PI);
+ctx.stroke();
+
+  
+}
+
+function te1ccx(dx1,dx2,yp1,yp2){
+return ((-gx0*(2*m0x1+m0x2)*Math.sin(dx1)-m0x2*gx0*Math.sin(dx1-(2*dx2))-2*Math.sin(dx1-dx2)*m0x2*(yp2*yp2*l0x2+yp1*yp1*l0x1*Math.cos(dx1-dx2)))/(l0x1*(2*m0x1+m0x2-m0x2*Math.cos((2*dx1)-(2*dx2)))));
+}
+
+function te2ccx(dx1,dx2,yp1,yp2){
+return (2*Math.sin(dx1-dx2)*(yp1*yp1*l0x1*(m0x1+m0x2)+gx0*(m0x1+m0x2)*Math.cos(dx1)+
+yp2*yp2*l0x2*m0x2*Math.cos(dx1-dx2))/(l0x2*(2*m0x1+m0x2-m0x2*Math.cos((2*dx1)-(2*dx2)))));
+}
+
+function dtor(a0x)
+{
+return (a0x* Math.PI) / 180.0;
+}
+
+
+function rtod(a0x)
+{
+let stx="";
+stu=(a0x*180) / Math.PI;
+stux=Math.trunc(stu);
+min=Math.abs(stu-stux)*60;
+minx=Math.trunc(min);
+secx=Math.abs(min-minx)*60;
+secx=(secx>-10 && secx<10)?"0"+secx:secx;
+
+minx=(minx>-10 && minx<10)?"0"+minx:minx;
+stx=stux+"&#176;"+minx+"'"+secx+"''";
+return stx;
+}
+
+
+function myFunction1() {
+strxx="";
+brojx=document.getElementById("broj").value;
+
+let pattern = /<tr>.*?<\/tr>/ig;
+let re="("+brojx+")";
+let patternx=new RegExp(re, "ig");
+
+
+
+strxx+="<table class='tab'>";
+strxx+="<tr>";
+strxx+="<th>RB.</th><th>yp1</th>";
+strxx+="<th>yp2</th><th>dx1</th>";
+strxx+="<tr>";
+strxx+="<th>RB.</th><th>dx2</th>";
+strxx+="<th>dxx1</th><th>dyy1</th>";
+strxx+="</tr>";
+strxx+="<tr>";
+strxx+="<th>RB.</th><th></th>";
+strxx+="<th>dxx2</th><th>dyy2</th>";
+strxx+="</tr>";
+strxx+="<tr>";
+strxx+="<th>RB.</th>";
+strxx+="<th>(dx1)&#176;</th><th>(dx2)&#176;</th>";
+strxx+="<th>(dx1-dx2)&#176;</th>";
+strxx+="</tr>";
+strxx+="<tr>";
+strxx+="<th>RB.</th><th>te1cc</th>";
+strxx+="<th>te2cc</th><th></th>";
+strxx+="</tr>";
+
+strxx+="<tr>";
+strxx+="<th>RB.</th><th>x1c</th>";
+strxx+="<th>y1c</th><th>x2c</th>";
+strxx+="</tr>";
+
+strxx+="<tr>";
+strxx+="<th>RB.</th><th>y2c</th>";
+strxx+="<th>x1cc</th><th>y1cc</th>";
+strxx+="</tr>";
+
+strxx+="<tr>";
+strxx+="<th>RB.</th>";
+strxx+="<th>x2cc</th><th>y2cc</th><th></th>";
+strxx+="</tr>";
+
+strxx+="<tr>";
+strxx+="<th>RB.</th>";
+strxx+="<th>T1</th><th>T2</th><th></th>";
+strxx+="</tr>";
+
+strxx+="<tr>";
+strxx+="<th>RB.</th>";
+strxx+="<th>T1x</th><th>T2x</th><th>Tx</th>";
+strxx+="</tr>";
+
+strxx+="<tr>";
+strxx+="<th>RB.</th>";
+strxx+="<th>T1y</th><th>T2y</th><th>Ty</th>";
+strxx+="</tr>";
+
+do {
+    m = pattern.exec(str);
+
+    if(patternx.exec(m)){
+strxx+=m.toString().replaceAll(patternx,"<span style='color:white;font-weight:bold;font-style:italic;'>$1</span>");
+}
+
+} while (m);
+
+strxx+="</table><br><br><br>";
+
+document.getElementById("demo").innerHTML=strxx;
+
+}
+
+
+</script>
+
+</body>
+</html>

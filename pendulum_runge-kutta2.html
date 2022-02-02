@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+.center {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+
+.button {
+  background-color:#96D4D4;
+  color: black;
+  padding: 15px 32px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  cursor: pointer;
+}
+table, th, td {
+  border: 1px solid black;
+ 
+}
+th{
+  background-color:cyan;
+}
+
+th, td {
+  text-align: left;
+  padding: 8px;
+}
+tr:nth-child(even) {
+  background-color: #96D4D4;
+}
+
+ .tab {
+  width:100%;
+}
+
+body{
+background-color:lightgray;
+}
+
+</style>
+</head>
+<body>
+<h2 style="text-align:center;">MATEMATICKO NJIHALO</h2>
+<p style="text-align:center;">Unesi vrijednosti</p>
+<table class="center">
+<tr>
+<td>unesi l=</td>
+<td><input type="text" id="l" value="10" >
+</td>
+</tr>
+<tr>
+<td>unesi kut a</td>
+<td><input type="text" id="a" value="45" >
+</td>
+</tr>
+<tr>
+<td>gravitaciju g=</td>
+<td><input type="text" id="g" value="10" >
+</td>
+</tr>
+<tr>
+<td>
+korak e=</td>
+<td><input type="text" id="e" value=".01" >
+</td>
+</tr>
+</table>
+
+<hr>
+<p style="text-align:center;">Stisni tipku</p>
+<div style="text-align:center">
+<button class="button" onclick="myFunction()" >Racun</button>
+</div>
+<hr>
+<p style="text-align:center;">Stisni tipku</p>
+<p style="text-align:center;">1234</p>
+<table class="center">
+<tr>
+<td>unesi broj=</td>
+<td><input type="text" id="broj" value="1234" >
+</td>
+</table>
+<br>
+<div style="text-align:center">
+<button class="button" onclick="myFunction1()" >Trazi</button>
+</div>
+<br>
+<hr>
+<center>
+<canvas id="myCanvas" width="800" height="450" style="border:1px solid #d3d3d3;background-color:white;">
+Your browser does not support the HTML canvas tag.</canvas>
+</center>
+<div style="text-align:center">
+<button class="button" onclick="init()" >Stisni</button>
+</div>
+<hr>
+<div id="polje">polje</div>
+<p id="demo"></p>
+<script>
+var str="",strx="";
+var per="";
+var i=0;
+var t=0;
+var dt=0;
+var ctx; 
+var c;
+var l0,l0x,a0,a0x,e0,e0x;
+var xx,yy,da0x;
+
+function myFunction() {
+c= document.getElementById("myCanvas");
+ctx = c.getContext("2d");
+str="";
+i=0;
+l0=document.getElementById("l").value;
+l0x=parseFloat(l0);
+a0=document.getElementById("a").value;
+a0x=parseFloat(a0);
+gx=document.getElementById("g").value;
+g0x=parseFloat(gx);
+e0=document.getElementById("e").value;
+e0x=parseFloat(e0);
+
+
+str+="<hr>";
+str+=l0+"<br>";
+str+=a0+"<br>";
+str+=gx+"<br>";
+str+=e0+"<br>";
+
+da0x=dtor(a0x);
+
+str+=da0x+"<br>";
+str+="<hr>";
+
+if(a0x<=0 || a0x>90) {
+  alert("kut manji od nule ili veci od 90");
+  document.getElementById("a").value="";
+  da0x=0.01;
+}
+
+
+str+="<table class='tab'>";
+str+="<tr>";
+str+="<th>RB.</th><th>dt</th>";
+str+="<th>yp</th><th>yd</th>";
+str+="<tr>";
+str+="<th>RB.</th><th>dxx</th>";
+str+="<th>dyy</th><th>&#176;</th>";
+str+="</tr>";
+
+dx=da0x;
+yp=0;
+i=0;
+while(yp<=0)
+{
+k1=-(g0x/l0x)*Math.sin(dx)*e0x;
+k2=-(g0x/l0x)*Math.sin(dx+k1)*e0x;
+yp=yp+.5*(k1+k2);
+dx+=yp*e0x;
+dyy=Math.cos(dx);
+dxx=Math.sin(dx);
+str+="<tr>";
+str+="<td>"+i+"</td>";
+str+="<td>"+dt+"</td>";
+str+="<td>"+yp+"</td>";
+str+="<td>"+dx+"</td>";
+str+="</tr>";
+str+="<tr>";
+str+="<td>"+i+"</td>";
+str+="<td>"+dxx+"</td>";
+str+="<td>"+dyy+"</td>";
+str+="<td>"+rtod(dx)+"</td>";
+str+="</tr>";
+dt+=e0x;
+i++;
+
+
+}
+
+
+str+="</table>";
+
+
+str+="</br></br>";
+
+document.getElementById("polje").innerHTML=str;
+
+
+
+}
+
+
+
+
+
+
+function init()
+{
+l0=document.getElementById("l").value;
+l0x=parseFloat(l0);
+gx=document.getElementById("g").value;
+g0x=parseFloat(gx);
+   a0=document.getElementById("a").value;
+a0x=parseFloat(a0);
+  dx1=dtor(a0x);
+  yp1=0;
+
+  setInterval(draw,10);
+
+}
+
+
+
+function draw()
+{
+
+
+
+yp1+=-(g0x/l0x)*Math.sin(dx1)*0.01;
+dx1+=yp1*0.01;
+dyy1=300*Math.cos(dx1);
+dxx1=300*Math.sin(dx1);
+  ctx.clearRect(0,0,800,450);
+  ctx.fillStyle ='white';
+//ctx.fillRect(0,0,600,450);
+
+ctx.beginPath();
+ctx.moveTo(400,0);
+ctx.lineTo(400,450);
+ctx.strokeStyle = "black";
+ctx.stroke()
+ctx.closePath();
+
+
+ctx.beginPath();
+ctx.moveTo(0,0);
+ctx.lineTo(600,0);
+ctx.strokeStyle = "black";
+ctx.stroke()
+ctx.closePath();
+
+
+ctx.beginPath();
+//ctx.moveTo(300+x0x,225-y0x);
+ctx.moveTo(400,0);
+ctx.lineTo(400-dxx1,dyy1);
+ctx.strokeStyle = "black";
+ctx.stroke();
+ctx.closePath();
+ctx.beginPath();
+ctx.arc(400-dxx1,dyy1, 5, 0, 2 * Math.PI);
+ctx.stroke();
+
+
+  
+}
+
+function dtor(a0x)
+{
+return (a0x* Math.PI) / 180.0;
+}
+
+
+function rtod(a0x)
+{
+let stx="";
+stu=(a0x*180) / Math.PI;
+stux=Math.trunc(stu);
+min=Math.abs(stu-stux)*60;
+minx=Math.trunc(min);
+secx=Math.abs(min-minx)*60;
+secx=(secx>-10 && secx<10)?"0"+secx:secx;
+
+minx=(minx>-10 && minx<10)?"0"+minx:minx;
+stx=stux+"&#176;"+minx+"'"+secx+"''";
+return stx;
+}
+
+
+function myFunction1() {
+strxx="";
+brojx=document.getElementById("broj").value;
+
+let pattern = /<tr>.*?<\/tr>/ig;
+let re="("+brojx+")";
+let patternx=new RegExp(re, "ig");
+
+
+
+strxx+="<table class='tab'>";
+strxx+="<tr>";
+strxx+="<th>RB.</th><th>dx</th>";
+strxx+="<th>yp</th><th>yd</th>";
+strxx+="</tr>";
+strxx+="<tr>";
+strxx+="<th>RB.</th><th>dxx</th>";
+strxx+="<th>dyy</th><th>&#176;</th>";
+strxx+="</tr>";
+
+do {
+    m = pattern.exec(str);
+
+    if(patternx.exec(m)){
+strxx+=m.toString().replaceAll(patternx,"<span style='color:white;font-weight:bold;font-style:italic;'>$1</span>");
+}
+
+} while (m);
+
+strxx+="</table><br><br><br>";
+
+document.getElementById("demo").innerHTML=strxx;
+
+}
+
+
+</script>
+
+</body>
+</html>
